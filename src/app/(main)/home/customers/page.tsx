@@ -57,9 +57,6 @@ export default async function CustomersPage() {
               <div className="w-full sm:w-[350px]">
                 <SearchBar />
               </div>
-              <div className="sm:hidden">
-                <CreateCustomerButton />
-              </div>
             </div>
           </div>
 
