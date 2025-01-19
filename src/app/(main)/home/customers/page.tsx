@@ -14,7 +14,7 @@ export default async function CustomersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       {/* Navigation Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +50,7 @@ export default async function CustomersPage() {
         </div>
 
         {/* Table Card */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden mb-16"> {/* Added bottom margin */}
           {/* Table Toolbar */}
           <div className="border-b border-gray-200 p-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -65,7 +65,7 @@ export default async function CustomersPage() {
       </div>
 
       {/* Mobile FAB */}
-      <div className="fixed right-4 bottom-4 sm:hidden">
+      <div className="fixed right-4 bottom-4 sm:hidden z-20">
         <CreateCustomerButton mode="mobile" />
       </div>
     </div>

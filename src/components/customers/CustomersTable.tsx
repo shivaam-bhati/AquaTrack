@@ -74,22 +74,22 @@ export function CustomersTable() {
     <div>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
-            <TableHead className="w-[150px]">Phone</TableHead>
-            <TableHead className="w-[200px]">Address</TableHead>
-            <TableHead className="w-[100px]">Price/Jar</TableHead>
-            <TableHead className="w-[100px] text-right">Actions</TableHead>
+          <TableRow className="bg-gray-100 hover:bg-gray-100">
+            <TableHead className="font-semibold text-gray-900 px-4">Name</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4">Phone</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4">Address</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4">Price/Jar</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4 text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {customers?.map((customer: Customer) => (
-            <TableRow key={customer.id} className="hover:bg-gray-50">
-              <TableCell className="font-medium">{customer.name}</TableCell>
-              <TableCell>{customer.phone}</TableCell>
-              <TableCell className="text-gray-500">{customer.address}</TableCell>
-              <TableCell>₹{customer.pricePerJar}</TableCell>
-              <TableCell>
+            <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
+              <TableCell className="font-medium px-4 whitespace-nowrap">{customer.name}</TableCell>
+              <TableCell className="px-4">{customer.phone}</TableCell>
+              <TableCell className="text-gray-500 px-4 whitespace-nowrap">{customer.address}</TableCell>
+              <TableCell className="px-4">₹{customer.pricePerJar}</TableCell>
+              <TableCell className="px-4">
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="ghost"

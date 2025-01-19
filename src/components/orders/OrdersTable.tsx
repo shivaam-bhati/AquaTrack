@@ -148,7 +148,7 @@ export function OrdersTable() {
         <AlertDialogContent className="w-[calc(100%-2rem)] max-w-lg mx-auto">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold">
-              Delete Customer
+              Delete Order
             </AlertDialogTitle>
             <AlertDialogDescription className="text-gray-500 mt-3">
               Are you sure you want to delete this order? This action cannot be undone.

@@ -79,7 +79,7 @@ export default async function DashboardPage() {
 
           {/* Analytics Tile */}
           <Link 
-            href="/home/analytics" 
+            href="/home/reports" 
             className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 relative overflow-hidden hover:-translate-y-1"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
