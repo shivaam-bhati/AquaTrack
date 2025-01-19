@@ -1,0 +1,151 @@
+'use client'
+
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useCustomers } from "@/hooks/useCustomers";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PaginationBar } from "./PaginationBar";
+import { Pencil, Trash2 } from "lucide-react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { CustomerDialog } from "./CreateCustomerButton";
+import { DeleteConfirmationDialog } from "../custom/DeleteDialog";
+import { toast } from "sonner";
+
+type Customer = {
+  name: string,
+  <address></address>
+}
+
+export function CustomersTable() {
+  const { customers, pagination, isLoading, error, mutate } = useCustomers();
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deletingCustomer, setDeletingCustomer] = useState(null);
+
+  async function handleDelete(customerId : string) {
+    try {
+      const response = await fetch(`/api/customers/${customerId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete customer");
+
+      toast.success("Customer deleted successfully");
+      mutate();
+    } catch (error) {
+      toast.error("Error deleting customer");
+    }
+  }
+
+  if (isLoading) return <TableSkeleton />;
+  if (error) return <div>Error loading customers</div>;
+
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-gray-100 hover:bg-gray-100">
+            <TableHead className="font-semibold text-gray-900 text-left px-4">Customer</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4">Phone</TableHead>
+            <TableHead className="font-semibold text-gray-900 px-4">Address</TableHead>
+            <TableHead className="font-semibold text-gray-900 text-right px-4">Price/Jar</TableHead>
+            <TableHead className="font-semibold text-gray-900 text-right px-4">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {customers.map((customer : Customer) => (
+            <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
+              <TableCell className="px-4">{customer.name}</TableCell>
+              <TableCell className="px-4">{customer.phone}</TableCell>
+              <TableCell className="px-4">{customer.address || "-"}</TableCell>
+              <TableCell className="px-4 text-right">₹{customer.pricePerJar}</TableCell>
+              <TableCell className="px-4 text-right">
+                <div className="flex justify-end gap-2">
+                  {/* Edit Dialog */}
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        className="h-8 w-8 p-0 hover:bg-blue-50"
+                        onClick={() => setEditingCustomer(customer)}
+                      >
+                        <Pencil className="h-4 w-4 text-blue-600" />
+                      </Button>
+                    </DialogTrigger>
+                    {editingCustomer && (
+                      <CustomerDialog
+                        mode="edit"
+                        customer={editingCustomer}
+                        onClose={() => {
+                          setIsDialogOpen(false);
+                          setEditingCustomer(null);
+                        }}
+                        onSuccess={() => {
+                          mutate();
+                          setIsDialogOpen(false);
+                          setEditingCustomer(null);
+                        }}
+                      />
+                    )}
+                  </Dialog>
+
+                  {/* Delete Confirmation Dialog */}
+                  <Dialog open={!!deletingCustomer} onOpenChange={() => setDeletingCustomer(null)}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        className="h-8 w-8 p-0 hover:bg-red-50"
+                        onClick={() => setDeletingCustomer(customer)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
+                    </DialogTrigger>
+                    {deletingCustomer && (
+                      <DeleteConfirmationDialog
+                        customer={deletingCustomer}
+                        onClose={() => setDeletingCustomer(null)}
+                        onDelete={() => {
+                          handleDelete(deletingCustomer.id);
+                          setDeletingCustomer(null);
+                        }}
+                      />
+                    )}
+                  </Dialog>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {pagination && pagination.pageCount > 0 && (
+        <div className="py-4 px-6 border-t bg-white">
+          <PaginationBar totalPages={pagination.pageCount} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="flex items-center space-x-4 p-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
