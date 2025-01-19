@@ -9,6 +9,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+  } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useOrders } from "@/hooks/useOrders";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,7 +26,7 @@ import { PaginationBar } from "../customers/PaginationBar";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { OrderDialog } from "./CreateOrderButton";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 interface Order {
@@ -32,20 +42,20 @@ interface Order {
 export function OrdersTable() {
   const { orders, pagination, isLoading, error, mutate } = useOrders();
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  async function handleDelete(orderId: number) {
-    if (!confirm("Are you sure you want to delete this order?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
 
     try {
-      const response = await fetch(`/api/orders/${orderId}`, {
+      const response = await fetch(`/api/orders/${deleteId}`, {
         method: "DELETE",
       });
 
       if (!response.ok) throw new Error("Failed to delete order");
 
       toast.success("Order deleted successfully");
-      mutate(); // Refresh the orders list
+      mutate();
     } catch (error) {
       toast.error("Error deleting order");
       console.error("Error deleting order:", error);
@@ -94,39 +104,20 @@ export function OrdersTable() {
                 ₹{order.netAmount}
               </TableCell>
               <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-blue-50 transition-colors"
-                        onClick={() => setEditingOrder(order)}
-                      >
-                        <Pencil className="h-4 w-4 text-blue-600" />
-                      </Button>
-                    </DialogTrigger>
-                    {editingOrder && (
-                      <OrderDialog
-                        mode="edit"
-                        order={editingOrder}
-                        onClose={() => {
-                          setIsDialogOpen(false);
-                          setEditingOrder(null);
-                        }}
-                        onSuccess={() => {
-                          mutate();
-                          setIsDialogOpen(false);
-                          setEditingOrder(null);
-                        }}
-                      />
-                    )}
-                  </Dialog>
+              <div className="flex justify-end gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 hover:bg-red-50 transition-colors"
-                    onClick={() => handleDelete(order.id)}
+                    onClick={() => setEditingOrder(order)}
+                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                  >
+                    <Pencil className="h-4 w-4 text-blue-600" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDeleteId(order.id)}
+                    className="h-8 w-8 p-0 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4 text-red-600" />
                   </Button>
@@ -141,6 +132,41 @@ export function OrdersTable() {
           <PaginationBar totalPages={pagination.pageCount} />
         </div>
       )}
+
+<Dialog open={!!editingOrder} onOpenChange={(open) => !open && setEditingOrder(null)}>
+        <OrderDialog
+          mode="edit"
+          order={editingOrder || undefined}
+          onClose={() => {
+            setEditingOrder(null);
+            mutate();
+          }}
+        />
+      </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent className="w-[calc(100%-2rem)] max-w-lg mx-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold">
+              Delete Customer
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 mt-3">
+              Are you sure you want to delete this order? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6 gap-3">
+            <AlertDialogCancel className="w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Order
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
