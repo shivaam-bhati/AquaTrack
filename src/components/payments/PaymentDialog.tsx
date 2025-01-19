@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -58,7 +57,7 @@ export function PaymentDialog({ customer, onClose, onSuccess }: PaymentDialogPro
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Record Payment - {customer.name}</DialogTitle>
+        <DialogTitle>Record Payment - <span className="text-blue-600">{customer.name}</span></DialogTitle>
       </DialogHeader>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
@@ -99,10 +98,7 @@ export function PaymentDialog({ customer, onClose, onSuccess }: PaymentDialogPro
           />
         </div>
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button variant="primary" type="submit" disabled={isLoading}>
             Record Payment
           </Button>
         </div>

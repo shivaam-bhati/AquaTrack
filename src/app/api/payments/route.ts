@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
       .insert(payments)
       .values({
         customerId,
-        amount: parseFloat(amount),
-        date: new Date(date),
+        amount: amount,
+        date: new Date(date).toISOString(),
         note: note || null,
         userId: session.user.id,
       })
