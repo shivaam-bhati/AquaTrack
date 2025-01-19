@@ -57,9 +57,9 @@ export default async function OrdersPage() {
               <div className="w-full sm:w-[350px]">
                 <SearchBar />
               </div>
-              <div className="sm:hidden">
+              {/* <div className="sm:hidden">
                 <CreateOrderButton />
-              </div>
+              </div> */}
             </div>
           </div>
 

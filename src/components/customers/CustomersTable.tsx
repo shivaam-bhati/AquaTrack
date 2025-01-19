@@ -28,12 +28,11 @@ interface Customer {
 
 export function CustomersTable() {
   const { customers, pagination, isLoading, error, mutate } = useCustomers();
-  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deletingCustomer, setDeletingCustomer] = useState(null);
 
-  async function handleDelete(customerId: number) {
-    if (!confirm("Are you sure you want to delete this customer?")) return;
-
+  async function handleDelete(customerId : string) {
     try {
       const response = await fetch(`/api/customers/${customerId}`, {
         method: "DELETE",
@@ -86,12 +85,12 @@ export function CustomersTable() {
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
+                  {/* Edit Dialog */}
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button
-                        variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 hover:bg-blue-50 transition-colors"
+                        className="h-8 w-8 p-0 hover:bg-blue-50"
                         onClick={() => setEditingCustomer(customer)}
                       >
                         <Pencil className="h-4 w-4 text-blue-600" />
@@ -113,14 +112,29 @@ export function CustomersTable() {
                       />
                     )}
                   </Dialog>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 hover:bg-red-50 transition-colors"
-                    onClick={() => handleDelete(customer.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                  </Button>
+
+                  {/* Delete Confirmation Dialog */}
+                  <Dialog open={!!deletingCustomer} onOpenChange={() => setDeletingCustomer(null)}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        className="h-8 w-8 p-0 hover:bg-red-50"
+                        onClick={() => setDeletingCustomer(customer)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
+                    </DialogTrigger>
+                    {deletingCustomer && (
+                      <DeleteConfirmationDialog
+                        customer={deletingCustomer}
+                        onClose={() => setDeletingCustomer(null)}
+                        onDelete={() => {
+                          handleDelete(deletingCustomer.id);
+                          setDeletingCustomer(null);
+                        }}
+                      />
+                    )}
+                  </Dialog>
                 </div>
               </TableCell>
             </TableRow>
@@ -150,4 +164,4 @@ function TableSkeleton() {
       ))}
     </div>
   );
-} 
+}
