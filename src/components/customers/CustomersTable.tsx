@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 import {
@@ -16,21 +16,24 @@ import { PaginationBar } from "./PaginationBar";
 import { Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CustomerDialog } from "./CreateCustomerButton";
-import { DeleteConfirmationDialog } from "../custom/DeleteDialog";
 import { toast } from "sonner";
 
-type Customer = {
-  name: string,
-  <address></address>
+interface Customer {
+  id: number;
+  name: string;
+  phone: string;
+  address: string | null;
+  pricePerJar: string;
 }
 
 export function CustomersTable() {
   const { customers, pagination, isLoading, error, mutate } = useCustomers();
-  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [deletingCustomer, setDeletingCustomer] = useState(null);
 
-  async function handleDelete(customerId : string) {
+  async function handleDelete(customerId: number) {
+    if (!confirm("Are you sure you want to delete this customer?")) return;
+
     try {
       const response = await fetch(`/api/customers/${customerId}`, {
         method: "DELETE",
@@ -42,6 +45,7 @@ export function CustomersTable() {
       mutate();
     } catch (error) {
       toast.error("Error deleting customer");
+      console.error("Error deleting customer:", error);
     }
   }
 
@@ -53,28 +57,41 @@ export function CustomersTable() {
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">
-            <TableHead className="font-semibold text-gray-900 text-left px-4">Customer</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4">Phone</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4">Address</TableHead>
-            <TableHead className="font-semibold text-gray-900 text-right px-4">Price/Jar</TableHead>
-            <TableHead className="font-semibold text-gray-900 text-right px-4">Actions</TableHead>
+            <TableHead className="font-semibold text-gray-900">Customer</TableHead>
+            <TableHead className="font-semibold text-gray-900 whitespace-nowrap">Phone</TableHead>
+            <TableHead className="font-semibold text-gray-900">Address</TableHead>
+            <TableHead className="font-semibold text-gray-900 whitespace-nowrap text-right">
+              Price/Jar
+            </TableHead>
+            <TableHead className="font-semibold text-gray-900 text-right w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer : Customer) => (
-            <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
-              <TableCell className="px-4">{customer.name}</TableCell>
-              <TableCell className="px-4">{customer.phone}</TableCell>
-              <TableCell className="px-4">{customer.address || "-"}</TableCell>
-              <TableCell className="px-4 text-right">₹{customer.pricePerJar}</TableCell>
-              <TableCell className="px-4 text-right">
+          {customers?.map((customer: Customer) => (
+            <TableRow 
+              key={customer.id}
+              className="hover:bg-gray-50 transition-colors"
+            >
+              <TableCell className="font-medium text-gray-900">
+                {customer.name}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {customer.phone}
+              </TableCell>
+              <TableCell className="text-gray-600">
+                {customer.address || "-"}
+              </TableCell>
+              <TableCell className="text-right font-medium text-gray-900 whitespace-nowrap">
+                ₹{customer.pricePerJar}
+              </TableCell>
+              <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  {/* Edit Dialog */}
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button
+                        variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 hover:bg-blue-50"
+                        className="h-8 w-8 p-0 hover:bg-blue-50 transition-colors"
                         onClick={() => setEditingCustomer(customer)}
                       >
                         <Pencil className="h-4 w-4 text-blue-600" />
@@ -96,29 +113,14 @@ export function CustomersTable() {
                       />
                     )}
                   </Dialog>
-
-                  {/* Delete Confirmation Dialog */}
-                  <Dialog open={!!deletingCustomer} onOpenChange={() => setDeletingCustomer(null)}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-red-50"
-                        onClick={() => setDeletingCustomer(customer)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </DialogTrigger>
-                    {deletingCustomer && (
-                      <DeleteConfirmationDialog
-                        customer={deletingCustomer}
-                        onClose={() => setDeletingCustomer(null)}
-                        onDelete={() => {
-                          handleDelete(deletingCustomer.id);
-                          setDeletingCustomer(null);
-                        }}
-                      />
-                    )}
-                  </Dialog>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 hover:bg-red-50 transition-colors"
+                    onClick={() => handleDelete(customer.id)}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
@@ -148,4 +150,4 @@ function TableSkeleton() {
       ))}
     </div>
   );
-}
+} 

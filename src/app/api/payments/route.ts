@@ -30,11 +30,11 @@ export async function POST(request: NextRequest) {
     const payment = await db
       .insert(payments)
       .values({
-        customer_id: customerId,
+        customerId,
         amount: parseFloat(amount),
         date: new Date(date),
         note: note || null,
-        user_id: session.user.id,
+        userId: session.user.id,
       })
       .returning();
 

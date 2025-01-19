@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -13,11 +13,11 @@ export function SearchBar() {
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
-      params.set("query", term);
+      params.set('query', term);
     } else {
-      params.delete("query");
+      params.delete('query');
     }
-    params.set("page", "1");
+    params.set('page', '1');
     replace(`${pathname}?${params.toString()}`);
   }, 500);
 
@@ -27,10 +27,10 @@ export function SearchBar() {
       <Input
         type="search"
         placeholder="Search customers..."
-        defaultValue={searchParams.get("query") || ""}
+        defaultValue={searchParams.get('query')?.toString()}
         onChange={(e) => handleSearch(e.target.value)}
-        className="w-full pl-10 pr-4 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+        className="w-full pl-9 pr-4 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
       />
     </div>
   );
-}
+} 

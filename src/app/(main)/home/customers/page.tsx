@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default async function CustomersPage() {
   const session = await auth();
-
+  
   if (!session?.user) {
     redirect('/auth/login');
   }
@@ -57,6 +57,9 @@ export default async function CustomersPage() {
               <div className="w-full sm:w-[350px]">
                 <SearchBar />
               </div>
+              <div className="sm:hidden">
+                <CreateCustomerButton />
+              </div>
             </div>
           </div>
 
@@ -70,4 +73,4 @@ export default async function CustomersPage() {
       </div>
     </div>
   );
-}
+} 

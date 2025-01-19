@@ -40,14 +40,14 @@ export const orders = pgTable("order", {
 
 export const payments = pgTable("payment", {
   id: serial("id").primaryKey(),
-  customer_id: integer("customer_id").notNull().references(() => customers.id, {
+  customerId: integer("customer_id").notNull().references(() => customers.id, {
     onDelete: "cascade",
     onUpdate: "cascade"
   }),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   date: date("date").notNull(),
   note: varchar("note", { length: 255 }),
-  user_id: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" })
+  userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" })
 });
 
 export const accounts = pgTable(

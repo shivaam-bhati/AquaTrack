@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -97,7 +98,6 @@ export function PaymentDialog({ customer, onClose, onSuccess }: PaymentDialogPro
             placeholder="Add a note about this payment"
           />
         </div>
-      </form>
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
@@ -106,6 +106,7 @@ export function PaymentDialog({ customer, onClose, onSuccess }: PaymentDialogPro
             Record Payment
           </Button>
         </div>
+      </form>
     </DialogContent>
   );
 } 
