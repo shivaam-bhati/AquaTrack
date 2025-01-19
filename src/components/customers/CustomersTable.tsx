@@ -14,138 +14,152 @@ import { useCustomers } from "@/hooks/useCustomers";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationBar } from "./PaginationBar";
 import { Pencil, Trash2 } from "lucide-react";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { CustomerDialog } from "./CreateCustomerButton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { Dialog } from "@/components/ui/dialog";
+import { CustomerDialog } from "./CreateCustomerButton";
 
 interface Customer {
   id: number;
   name: string;
   phone: string;
   address: string | null;
+  activeJars: number;
   pricePerJar: string;
 }
 
 export function CustomersTable() {
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const { customers, pagination, isLoading, error, mutate } = useCustomers();
-  const [editingCustomer, setEditingCustomer] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [deletingCustomer, setDeletingCustomer] = useState(null);
 
-  async function handleDelete(customerId : string) {
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
     try {
-      const response = await fetch(`/api/customers/${customerId}`, {
-        method: "DELETE",
+      const response = await fetch(`/api/customers/${deleteId}`, {
+        method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error("Failed to delete customer");
+      if (!response.ok) throw new Error('Failed to delete customer');
 
-      toast.success("Customer deleted successfully");
+      toast.success('Customer deleted successfully');
       mutate();
     } catch (error) {
-      toast.error("Error deleting customer");
-      console.error("Error deleting customer:", error);
+      toast.error('Failed to delete customer');
+      console.error(error);
+    } finally {
+      setDeleteId(null);
     }
+  };
+
+  if (isLoading) {
+    return <TableSkeleton />;
   }
 
-  if (isLoading) return <TableSkeleton />;
-  if (error) return <div>Error loading customers</div>;
+  if (error) {
+    return <div className="text-center p-4 text-red-500">Failed to load customers</div>;
+  }
 
   return (
-    <div className="rounded-md border">
+    <div>
       <Table>
         <TableHeader>
-          <TableRow className="bg-gray-100 hover:bg-gray-100">
-            <TableHead className="font-semibold text-gray-900">Customer</TableHead>
-            <TableHead className="font-semibold text-gray-900 whitespace-nowrap">Phone</TableHead>
-            <TableHead className="font-semibold text-gray-900">Address</TableHead>
-            <TableHead className="font-semibold text-gray-900 whitespace-nowrap text-right">
-              Price/Jar
-            </TableHead>
-            <TableHead className="font-semibold text-gray-900 text-right w-[100px]">Actions</TableHead>
+          <TableRow>
+            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead className="w-[150px]">Phone</TableHead>
+            <TableHead className="w-[200px]">Address</TableHead>
+            <TableHead className="w-[100px]">Price/Jar</TableHead>
+            <TableHead className="w-[100px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {customers?.map((customer: Customer) => (
-            <TableRow 
-              key={customer.id}
-              className="hover:bg-gray-50 transition-colors"
-            >
-              <TableCell className="font-medium text-gray-900">
-                {customer.name}
-              </TableCell>
-              <TableCell className="whitespace-nowrap">
-                {customer.phone}
-              </TableCell>
-              <TableCell className="text-gray-600">
-                {customer.address || "-"}
-              </TableCell>
-              <TableCell className="text-right font-medium text-gray-900 whitespace-nowrap">
-                ₹{customer.pricePerJar}
-              </TableCell>
-              <TableCell className="text-right">
+            <TableRow key={customer.id} className="hover:bg-gray-50">
+              <TableCell className="font-medium">{customer.name}</TableCell>
+              <TableCell>{customer.phone}</TableCell>
+              <TableCell className="text-gray-500">{customer.address}</TableCell>
+              <TableCell>₹{customer.pricePerJar}</TableCell>
+              <TableCell>
                 <div className="flex justify-end gap-2">
-                  {/* Edit Dialog */}
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-blue-50"
-                        onClick={() => setEditingCustomer(customer)}
-                      >
-                        <Pencil className="h-4 w-4 text-blue-600" />
-                      </Button>
-                    </DialogTrigger>
-                    {editingCustomer && (
-                      <CustomerDialog
-                        mode="edit"
-                        customer={editingCustomer}
-                        onClose={() => {
-                          setIsDialogOpen(false);
-                          setEditingCustomer(null);
-                        }}
-                        onSuccess={() => {
-                          mutate();
-                          setIsDialogOpen(false);
-                          setEditingCustomer(null);
-                        }}
-                      />
-                    )}
-                  </Dialog>
-
-                  {/* Delete Confirmation Dialog */}
-                  <Dialog open={!!deletingCustomer} onOpenChange={() => setDeletingCustomer(null)}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        className="h-8 w-8 p-0 hover:bg-red-50"
-                        onClick={() => setDeletingCustomer(customer)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </DialogTrigger>
-                    {deletingCustomer && (
-                      <DeleteConfirmationDialog
-                        customer={deletingCustomer}
-                        onClose={() => setDeletingCustomer(null)}
-                        onDelete={() => {
-                          handleDelete(deletingCustomer.id);
-                          setDeletingCustomer(null);
-                        }}
-                      />
-                    )}
-                  </Dialog>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingCustomer(customer)}
+                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                  >
+                    <Pencil className="h-4 w-4 text-blue-600" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDeleteId(customer.id)}
+                    className="h-8 w-8 p-0 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
           ))}
+          {customers?.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                No customers found
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
       {pagination && pagination.pageCount > 0 && (
-        <div className="py-4 px-6 border-t bg-white">
+        <div className="py-4 border-t">
           <PaginationBar totalPages={pagination.pageCount} />
         </div>
       )}
+
+      <Dialog open={!!editingCustomer} onOpenChange={(open) => !open && setEditingCustomer(null)}>
+        <CustomerDialog
+          mode="edit"
+          customer={editingCustomer || undefined}
+          onClose={() => {
+            setEditingCustomer(null);
+            mutate();
+          }}
+        />
+      </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent className="w-[calc(100%-2rem)] max-w-lg mx-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold">
+              Delete Customer
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 mt-3">
+              Are you sure you want to delete this customer? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6 gap-3">
+            <AlertDialogCancel className="w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Customer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -164,4 +178,4 @@ function TableSkeleton() {
       ))}
     </div>
   );
-}
+} 
