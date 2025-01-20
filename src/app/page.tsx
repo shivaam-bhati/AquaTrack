@@ -1,6 +1,30 @@
+'use client'
+
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function LandingPage() {
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  const faqData = [
+    {
+      question: "How does AquaTrack help with water jar management?",
+      answer: "AquaTrack helps you digitally track water jars, manage customers, and provide timely reports to grow your water business."
+    },
+    {
+      question: "Can I track multiple customers at once?",
+      answer: "Yes! AquaTrack allows you to manage multiple customers, track deliveries, and maintain inventory efficiently."
+    },
+    {
+      question: "Is AquaTrack available on mobile?",
+      answer: "Yes, AquaTrack is optimized for mobile devices, making it easy to manage your water jar business on the go."
+    }
+  ];
+
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -96,6 +120,54 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="px-4 py-12 md:py-16 bg-gray-50" id="faq">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-blue-600 font-semibold">FAQ</span>
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mt-2">
+              Frequently Asked Questions
+            </h2>
+          </div>
+          <div className="space-y-4">
+            {faqData.map((faq, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+              >
+                <button
+                  className="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-900 focus:outline-none"
+                  onClick={() => toggleFaq(index)}
+                >
+                  <span>{faq.question}</span>
+                  <svg
+                    className={`w-6 h-6 text-blue-600 transform transition-transform duration-200 ${
+                      activeFaq === index ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
+                    ></path>
+                  </svg>
+                </button>
+                {activeFaq === index && (
+                  <div className="mt-4 text-gray-600">
+                    <p>{faq.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer - Simplified and Mobile Optimized */}
       <footer className="bg-gradient-to-br from-white via-blue-50 to-blue-100 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -109,7 +181,6 @@ export default function LandingPage() {
               </span>
             </div>
             <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              <Link href="/features" className="text-gray-600 hover:text-blue-600">Features</Link>
               <Link href="/pricing" className="text-gray-600 hover:text-blue-600">Pricing</Link>
               <Link href="/contact" className="text-gray-600 hover:text-blue-600">Contact</Link>
               <Link href="/privacy" className="text-gray-600 hover:text-blue-600">Privacy</Link>
