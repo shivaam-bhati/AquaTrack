@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AquaTrack - Your Water Business Partner 💧
 
-## Getting Started
+![AquaTrack Preview](https://www.aquatracker.in/preview-image.png)
 
-First, run the development server:
+AquaTrack is the ultimate solution for managing your water jar business. Track water jars, manage customers, and grow your business digitally—all from your phone. Say goodbye to diaries and hello to streamlined operations with AquaTrack.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Daily Jar Tracking**: Track given and returned jars in real-time.
+- **Customer Management**: Maintain digital customer profiles with payment history and delivery addresses.
+- **Business Reports**: Generate monthly collection reports, jar balance analysis, and business insights.
+- **Mobile Optimized**: Manage your business on the go with a mobile-friendly interface.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📦 Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js (v18 or higher)
+- npm (v9 or higher)
+- PostgreSQL (or any preferred database)
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/aquatrack.git
+   cd aquatrack
+2. Install dependencies:
+   ```bash
+    npm install
+3. Setup environment variables:
+  - create a .env file in root directory
+  - add followig variables
+    ```bash
+    DATABASE_URL=""
+    NEXT_PUBLIC_BASE_URL=""
+    
+    # Auth
+    NEXTAUTH_URL=""
+    NEXTAUTH_SECRET="" # generate using `openssl rand -base64 32`
+    GOOGLE_CLIENT_ID=""
+    GOOGLE_CLIENT_SECRET=""  
+  
+4. Run database migrations:
+    ```bash
+    npm run db:push
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Start the development server:
+    ```bash
+    npm run dev
+
+6. Open your browser and navigate to http://localhost:3000.
+
+### 🛠️ Tech Stack:
+  - Frontend: Next.js, Tailwind CSS
+  - Backend: Next.js API Routes
+  - Database: PostgreSQL (via Drizzle ORM)
+  - Authentication: NextAuth.js
+  - Deployment: Vercel
+
+
+  
