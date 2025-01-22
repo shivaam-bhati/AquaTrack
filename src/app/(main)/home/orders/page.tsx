@@ -68,7 +68,7 @@ export default async function OrdersPage() {
       </div>
 
       {/* Mobile FAB */}
-      <div className="fixed right-4 bottom-4 sm:hidden">
+      <div className="fixed right-10 bottom-28 sm:hidden">
         <CreateOrderButton mode="mobile" />
       </div>
     </div>

@@ -8,7 +8,16 @@ import { format } from "date-fns";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PaymentDialog } from "@/components/payments/PaymentDialog";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Home, Link, Receipt } from "lucide-react";
+import { ChevronRight, Home, Receipt } from "lucide-react";
+import Link from "next/link";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Customer {
   id: number;
@@ -32,8 +41,8 @@ interface CustomerSummary {
 }
 
 export function ReportsContent() {
-  const { customers, isLoading: customersLoading } = useCustomers();
-  const { orders, isLoading: ordersLoading, mutate } = useOrders();
+  const { customers} = useCustomers();
+  const { orders, mutate } = useOrders();
   const [currentMonth, setCurrentMonth] = useState<string>("");
   const [customerSummaries, setCustomerSummaries] = useState<CustomerSummary[]>([]);
 
@@ -74,10 +83,6 @@ export function ReportsContent() {
       setCustomerSummaries(newCustomerSummaries);
     }
   }, [customers, orders]);
-
-  if (customersLoading || ordersLoading || !currentMonth) {
-    return <div>Loading...</div>; // You can add a more sophisticated loading spinner here
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -162,41 +167,39 @@ export function ReportsContent() {
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto rounded-md border">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                      Customer
-                    </th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-gray-900">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-100 hover:bg-gray-100">
+                    <TableHead className="font-semibold text-gray-900 whitespace-nowrap">Customer</TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-center whitespace-nowrap">
                       Pending Amount
-                    </th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-gray-900">
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-center whitespace-nowrap">
                       Pending Jars
-                    </th>
-                    <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-right whitespace-nowrap">
                       Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {customerSummaries
                     ?.filter(
                       (customer: CustomerSummary) =>
                         customer.totalAmount > 0 || customer.pendingJars > 0
                     )
                     .map((customer: CustomerSummary) => (
-                      <tr key={customer.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
+                        <TableCell className="whitespace-nowrap font-medium text-gray-900">
                           {customer.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-900">
+                        </TableCell>
+                        <TableCell className="text-center font-medium text-gray-900">
                           ₹{customer.totalAmount.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-900">
+                        </TableCell>
+                        <TableCell className="text-center font-medium text-gray-900">
                           {customer.pendingJars}
-                        </td>
-                        <td className="px-6 py-4 text-right">
+                        </TableCell>
+                        <TableCell className="text-right">
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button
@@ -218,11 +221,18 @@ export function ReportsContent() {
                               onSuccess={() => mutate()}
                             />
                           </Dialog>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                </tbody>
-              </table>
+                  {orders?.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                        No data found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>

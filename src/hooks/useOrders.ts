@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
 const fetcher = async (url: string) => {
@@ -9,7 +10,14 @@ const fetcher = async (url: string) => {
 };
 
 export function useOrders() {
-  const { data, error, mutate } = useSWR("/api/orders", fetcher, {
+  const searchParams = useSearchParams();
+
+  const query = searchParams.get('query') || '';
+  const page = searchParams.get('page') || '1';
+
+  const apiUrl = `/api/orders?query=${query}&page=${page}`;
+
+  const { data, error, mutate } = useSWR(apiUrl, fetcher, {
     refreshInterval: 0,
     revalidateOnFocus: false,
   });

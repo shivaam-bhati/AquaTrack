@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useCustomers } from "@/hooks/useCustomers";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationBar } from "./PaginationBar";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Phone, MapPin, IndianRupee } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -71,55 +71,122 @@ export function CustomersTable() {
   }
 
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-gray-100 hover:bg-gray-100">
-            <TableHead className="font-semibold text-gray-900 px-4">Name</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4">Phone</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4">Address</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4">Price/Jar</TableHead>
-            <TableHead className="font-semibold text-gray-900 px-4 text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {customers?.map((customer: Customer) => (
-            <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
-              <TableCell className="font-medium px-4 whitespace-nowrap">{customer.name}</TableCell>
-              <TableCell className="px-4">{customer.phone}</TableCell>
-              <TableCell className="text-gray-500 px-4 whitespace-nowrap">{customer.address}</TableCell>
-              <TableCell className="px-4">₹{customer.pricePerJar}</TableCell>
-              <TableCell className="px-4">
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingCustomer(customer)}
-                    className="h-8 w-8 p-0 hover:bg-blue-50"
-                  >
-                    <Pencil className="h-4 w-4 text-blue-600" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDeleteId(customer.id)}
-                    className="h-8 w-8 p-0 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                  </Button>
+    <div className="rounded-md border">
+      {/* Desktop Table */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-100 hover:bg-gray-100">
+              <TableHead className="font-semibold text-gray-900 px-4">Name</TableHead>
+              <TableHead className="font-semibold text-gray-900 px-4">Phone</TableHead>
+              <TableHead className="font-semibold text-gray-900 px-4">Address</TableHead>
+              <TableHead className="font-semibold text-gray-900 px-4">Price/Jar</TableHead>
+              <TableHead className="font-semibold text-gray-900 px-4 text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {customers?.map((customer: Customer) => (
+              <TableRow key={customer.id} className="hover:bg-gray-50 transition-colors">
+                <TableCell className="font-medium px-4 whitespace-nowrap">{customer.name}</TableCell>
+                <TableCell className="px-4">{customer.phone}</TableCell>
+                <TableCell className="text-gray-500 px-4 whitespace-nowrap">{customer.address}</TableCell>
+                <TableCell className="px-4">₹{customer.pricePerJar}</TableCell>
+                <TableCell className="px-4">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingCustomer(customer)}
+                      className="h-8 w-8 p-0 hover:bg-blue-50"
+                    >
+                      <Pencil className="h-4 w-4 text-blue-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteId(customer.id)}
+                      className="h-8 w-8 p-0 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+            {customers?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  No customers found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile Stacked Layout */}
+      <div className="md:hidden space-y-4 p-4">
+        {customers?.map((customer: Customer) => (
+          <div
+            key={customer.id}
+            className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow"
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-gray-900 text-lg">{customer.name}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditingCustomer(customer)}
+                  className="h-8 w-8 p-0 hover:bg-blue-50"
+                >
+                  <Pencil className="h-4 w-4 text-blue-600" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDeleteId(customer.id)}
+                  className="h-8 w-8 p-0 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-50 rounded-full">
+                  <Phone className="h-4 w-4 text-green-600" />
                 </div>
-              </TableCell>
-            </TableRow>
-          ))}
-          {customers?.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                No customers found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                <p className="text-sm text-gray-700">
+                  Phone: <span className="font-medium text-gray-900">{customer.phone}</span>
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-full">
+                  <MapPin className="h-4 w-4 text-blue-600" />
+                </div>
+                <p className="text-sm text-gray-700">
+                  Address: <span className="font-medium text-gray-900">{customer.address}</span>
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-50 rounded-full">
+                  <IndianRupee className="h-4 w-4 text-purple-600" />
+                </div>
+                <p className="text-sm text-gray-700">
+                  Price/Jar: <span className="font-medium text-purple-700">₹{customer.pricePerJar}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+        {customers?.length === 0 && (
+          <div className="text-center py-8 text-gray-500">No customers found</div>
+        )}
+      </div>
+
       {pagination && pagination.pageCount > 0 && (
         <div className="py-4 border-t">
           <PaginationBar totalPages={pagination.pageCount} />

@@ -23,6 +23,21 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
+
+    const isDropdown = searchParams.get("dropdown") === "true";
+    
+    if (isDropdown) {
+      const customersList = await db
+        .select({ id: customers.id, name: customers.name })
+        .from(customers)
+        .where(eq(customers.userId, session.user.id))
+        .execute();
+
+      return NextResponse.json({
+        customers: customersList,
+      });
+    }
+
     const query = searchParams.get("query") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = 10;
