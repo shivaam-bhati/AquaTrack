@@ -59,7 +59,7 @@ AquaTrack is the ultimate solution for managing your water jar business. Track w
 ### 🛠️ Tech Stack:
   - Frontend: Next.js, Tailwind CSS
   - Backend: Next.js API Routes
-  - Database: PostgreSQL (via Drizzle ORM)
+  - Database: PostgreSQL (via Drizzle ORM) hosted on Neon
   - Authentication: NextAuth.js
   - Deployment: Vercel
 
