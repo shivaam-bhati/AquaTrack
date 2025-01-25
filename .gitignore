@@ -8,6 +8,10 @@ node_modules
 # testing
 coverage
 
+# capacitor
+android/
+ios/
+
 # next.js
 .next/
 out/
