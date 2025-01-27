@@ -50,11 +50,17 @@ AquaTrack is the ultimate solution for managing your water jar business. Track w
     ```bash
     npm run db:push
 
-5. Start the development server:
+5. Development Workflow
+  - Start "Docker Desktop" or "Docker Engine", if not already running.
+  - Run below command to start the database:
+    ```bash
+    docker compose up
+   
+7. Start the development server:
     ```bash
     npm run dev
 
-6. Open your browser and navigate to http://localhost:3000.
+8. Open your browser and navigate to http://localhost:3000.
 
 ### 🛠️ Tech Stack:
   - Frontend: Next.js, Tailwind CSS
