@@ -58,7 +58,7 @@ export default function LandingPage() {
               </div>
             </div>
             
-            {/* Summary Card - Hidden on mobile, shown on desktop */}
+            {/* Hidden on mobile, shown on desktop */}
             <div className="hidden md:block relative">
               <div className="bg-blue-600 rounded-3xl p-6 text-white transform rotate-3 shadow-xl">
                 <div className="text-lg font-semibold mb-4">Today&apos;s Summary</div>
